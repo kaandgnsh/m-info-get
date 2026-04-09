@@ -1,6 +1,6 @@
 # m-info-get
 
-kaandgn tarafından geliştirilmiş basit bir OSINT (Open Source Intelligence) bilgi toplama aracıdır.
+kaandgnsh tarafından geliştirilmiş basit bir OSINT (Open Source Intelligence) bilgi toplama aracıdır.
 
 Bu araç telefon numarası, kullanıcı adı, IP ve temel domain bilgileri gibi verileri analiz etmek için tasarlanmıştır.
 
@@ -23,7 +23,7 @@ Bu araç telefon numarası, kullanıcı adı, IP ve temel domain bilgileri gibi 
 ## 📥 Kurulum
 
 ```bash
-git clone https://github.com/kaandgn_sh/m-info-get
+git clone https://github.com/kaandgnsh/m-info-get
 
 cd m-info-get
 
@@ -45,4 +45,4 @@ Yanlış kullanım tamamen kullanıcı sorumluluğundadır.
 👨‍💻 Developer
 
 Morbius.os
-GitHub: https://github.com/kaandgn_sh
+GitHub: https://github.com/kaandgnsh
