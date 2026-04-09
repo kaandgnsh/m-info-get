@@ -1,8 +1,26 @@
 # m-info-get
 
-Bir IP , Telefon numarası veyahut Nickname üzerinden yasal çerçeve kapsamına araştırma yapmanıza olanak sağlayan bir tool.
+Morbius.os tarafından geliştirilmiş basit bir OSINT (Open Source Intelligence) bilgi toplama aracıdır.
 
-## İndirme 
+Bu araç telefon numarası, kullanıcı adı, IP ve temel domain bilgileri gibi verileri analiz etmek için tasarlanmıştır.
+
+---
+
+## ⚙️ Özellikler
+
+- 📱 Telefon numarası bilgisi (ülke, operatör, timezone vb.)
+- 👤 Username (sosyal medya kontrolü)
+- 🌐 IP doğrulama ve temel analiz
+- 📧 Email domain çözümleme
+- 🔗 Domain IP çözümleme
+- 🔐 Hash (MD5 / SHA1)
+- 🔁 Base64 encode/decode
+- 🌍 URL kontrolü
+- 🧩 Subdomain kontrolü
+
+---
+
+## 📥 Kurulum
 
 ```bash
 git clone https://github.com/morbius-os/m-info-get
@@ -11,9 +29,20 @@ cd m-info-get
 
 cd m-info-get
 
-python3 m-info-get.py 
-```
+python3 m-info-get.py
 
-## Kullanım
 
-Repo'yu indirdikten sonra m-info-get.py dosyasını çalıştırın. Daha sonrasında toolda yapmak istediğiniz işlemi seçtikten sonra toolun istediklerini toola giriniz. IP sorgu için m-location toolumu kurarak kullanılır.
+---
+
+⚠️ Uyarı
+
+Bu araç yalnızca eğitim ve test amaçlıdır.
+Yanlış kullanım tamamen kullanıcı sorumluluğundadır.
+
+
+---
+
+👨‍💻 Developer
+
+Morbius.os
+GitHub: https://github.com/morbius-os
