@@ -34,7 +34,7 @@ python3 m-info-get.py
 ```
 ---
 
-##⚠️ Uyarı
+## ⚠️ Uyarı
 
 Bu araç yalnızca eğitim ve test amaçlıdır.
 Yanlış kullanım tamamen kullanıcı sorumluluğundadır.
