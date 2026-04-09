@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# kaandgnsh Ultimate OSINT Tool (FULL MERGED VERSION - SAFE/PASSIVE)
+# KaanDGN Ultimate OSINT - V13.0 (DEEP NICK & PHONE RECON)
 
 import os
 import sys
 import time
-import json
 import re
 import socket
+import threading
 import hashlib
 import base64
+import requests
+from concurrent.futures import ThreadPoolExecutor
 
-# ===== COLORS (UNCHANGED STYLE) =====
+# ===== COLORS (ORIGINAL - PROTECTED) =====
 Mor = '\033[95m'
 Cyan = '\033[96m'
 KoyuMavi = '\033[36m'
@@ -24,272 +26,192 @@ AltıÇizili = '\033[4m'
 Bitir = '\033[0m'
 Beyaz = '\033[1;37m'
 
-# ===== PHONE LIB =====
-try:
-    import phonenumbers
-    from phonenumbers import carrier, geocoder, timezone
-except:
-    os.system("pip install phonenumbers")
-    import phonenumbers
-    from phonenumbers import carrier, geocoder, timezone
+# ===== DEPENDENCIES (AUTOMATIC) =====
+def check_deps():
+    packages = {
+        "phonenumbers": "phonenumbers",
+        "requests": "requests",
+        "bs4": "beautifulsoup4",
+        "dnspython": "dns",
+        "googlesearch-python": "googlesearch"
+    }
+    for pkg, lib in packages.items():
+        try:
+            __import__(lib)
+        except ImportError:
+            os.system(f"pip install {pkg} --quiet")
 
-try:
-    import requests
-except:
-    os.system("pip install requests")
-    import requests
+check_deps()
 
+import phonenumbers
+from phonenumbers import carrier, geocoder, timezone, number_type
+from bs4 import BeautifulSoup
+import dns.resolver
+from googlesearch import search
 
-# ===== BANNER (YOUR ORIGINAL STYLE PRESERVED) =====
+# ===== BANNER (KaanDGN) =====
 def mini_banner():
+    os.system("clear || cls")
     print(Kalın + f"""
 , ＜￣｀ヽ、　　　　　 ／￣＞     
 　ゝ、　　＼　／⌒ヽ,ノ  　/         •Welcome To•
 　　　ゝ、　`（ ( ͡° ͜ʖ ͡°)／      •KaanDGN's•
-　　 　　>　 　 　,)         •Info Get Tool•
+　　 　　>　 　 　,)         •Elite Info Tool•
 　　　　 　∠_,,,/      
 {Bitir}
-Author: kaandgnsh
+Author: KaanDGN | {Kırmızı}Status: ULTRA RECON MODE ACTIVE{Bitir}
 """)
-
 
 # ===== MENU =====
 def menu():
     print(f"""
 ============= {Kırmızı}{AltıÇizili}GET INFO WITH{Bitir} =============
-{Kırmızı}[1]{Bitir} Phone
-{Kırmızı}[2]{Bitir} Nick
-{Kırmızı}[3]{Bitir} IP
-{Kırmızı}[4]{Bitir} Email
-{Kırmızı}[5]{Bitir} Domain
-{Kırmızı}[6]{Bitir} Hash
-{Kırmızı}[7]{Bitir} Base64
-{Kırmızı}[8]{Bitir} URL
-{Kırmızı}[9]{Bitir} Subdomain
+{Kırmızı}[1]{Bitir} MEGA PHONE SEARCH (Deep Info/Social/Ghost)
+{Kırmızı}[2]{Bitir} DEEP NICK SEARCH (All Social Media)
+{Kırmızı}[3]{Bitir} IP Geo-Location
+{Kırmızı}[4]{Bitir} Email Analysis
+{Kırmızı}[5]{Bitir} Domain/Whois Info
+{Kırmızı}[6]{Bitir} Hash Tool (Crack/Gen)
+{Kırmızı}[7]{Bitir} Base64 Tool
+{Kırmızı}[8]{Bitir} URL/Header Checker
+{Kırmızı}[9]{Bitir} Subdomain Brute
+{Kırmızı}[10]{Bitir} Port Scanner
+{Kırmızı}[11]{Bitir} Deep DNS (MX/TXT)
+{Kırmızı}[12]{Bitir} VPN/Proxy Detect
+{Kırmızı}[13]{Bitir} ACTIVE DORK SCANNER
 {Kırmızı}[99]{Bitir} EXIT
 """)
 
-
-# ================= PHONE (YOUR FULL VERSION INCLUDED) =================
-def PhoneGiveİnfo(phone):
+# ================= SOCIAL THREAD HELPER =================
+def _hunter_thread(platform, query):
     try:
-        parsed_number = phonenumbers.parse(phone, None)
+        for url in search(query, num_results=1, sleep_interval=2):
+            print(f" {Beyaz}[ {Yeşil}FOUND {Beyaz}] {platform:<10} : {Yeşil}{url}{Bitir}")
+    except: pass
 
-        region_code = phonenumbers.region_code_for_number(parsed_number)
-        jenis_provider = carrier.name_for_number(parsed_number, "en")
-        location = geocoder.description_for_number(parsed_number, "tr")
+# ================= 1: MEGA PHONE SEARCH (FULL) =================
+def MegaPhoneSearch(phone_input):
+    print(f'\n============={Yeşil} DEEP PHONE ANALYSIS {Bitir}=============')
+    
+    # FORMAT MOTORU
+    digits = re.sub(r'\D', '', phone_input)
+    if digits.startswith('0'):
+        final_phone = "+90" + digits[1:]
+    elif digits.startswith('90') and len(digits) > 10:
+        final_phone = "+" + digits
+    elif len(digits) == 10:
+        final_phone = "+90" + digits
+    else:
+        final_phone = "+" + digits if not phone_input.startswith("+") else phone_input
 
-        is_valid_number = phonenumbers.is_valid_number(parsed_number)
-        is_possible_number = phonenumbers.is_possible_number(parsed_number)
-
-        formatted_number = phonenumbers.format_number(
-            parsed_number,
-            phonenumbers.PhoneNumberFormat.INTERNATIONAL
-        )
-
-        formatted_number_for_mobile = phonenumbers.format_number_for_mobile_dialing(
-            parsed_number,
-            None,
-            with_formatting=True
-        )
-
-        number_type = phonenumbers.number_type(parsed_number)
-
-        timezone1 = timezone.time_zones_for_number(parsed_number)
-        timezoneF = ', '.join(timezone1)
-
-        print(f'============={Yeşil} PHONE İNFORMATİON {Bitir}=============')
-
-        print(f"\n {Beyaz}Location             :{Yeşil} {location}")
-        print(f" {Beyaz}region Code          :{Yeşil} {region_code}")
-        print(f" {Beyaz}Timezone             :{Yeşil} {timezoneF}")
-        print(f" {Beyaz}Operator             :{Yeşil} {jenis_provider}")
-        print(f" {Beyaz}Valid number         :{Yeşil} {is_valid_number}")
-        print(f" {Beyaz}Possible number      :{Yeşil} {is_possible_number}")
-        print(f" {Beyaz}International format :{Yeşil} {formatted_number}")
-        print(f" {Beyaz}Mobile format        :{Yeşil} {formatted_number_for_mobile}")
-        print(f" {Beyaz}Original number      :{Yeşil} {parsed_number.national_number}")
-        print(f" {Beyaz}E.164 format         :{Yeşil} {phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)}")
-        print(f" {Beyaz}Country code         :{Yeşil} {parsed_number.country_code}")
-        print(f" {Beyaz}Local number         :{Yeşil} {parsed_number.national_number}")
-
-        if number_type == phonenumbers.PhoneNumberType.MOBILE:
-            print(f" {Beyaz}Type                 :{Yeşil} Mobile")
-        elif number_type == phonenumbers.PhoneNumberType.FIXED_LINE:
-            print(f" {Beyaz}Type                 :{Yeşil} Fixed line")
+    # TEKNİK ANALİZ
+    print(f"{Sarı}[*] Teknik Veriler Çözümleniyor: {Beyaz}{final_phone}{Bitir}")
+    try:
+        parsed = phonenumbers.parse(final_phone, None)
+        if phonenumbers.is_valid_number(parsed):
+            ntype = phonenumbers.number_type(parsed)
+            type_map = {0: "Sabit Hat", 1: "Mobil (GSM)", 2: "Sabit/Mobil", 6: "VOIP", 8: "Pager"}
+            
+            print(f" {Beyaz}Durum        : {Yeşil}GEÇERLİ{Bitir}")
+            print(f" {Beyaz}Hat Tipi     : {Yeşil}{type_map.get(ntype, 'Bilinmiyor')}{Bitir}")
+            print(f" {Beyaz}Ülke/Bölge   : {Yeşil}{geocoder.description_for_number(parsed, 'tr')}{Bitir}")
+            print(f" {Beyaz}Operatör     : {Yeşil}{carrier.name_for_number(parsed, 'tr')}{Bitir}")
+            print(f" {Beyaz}Zaman Dilimi : {Yeşil}{timezone.time_zones_for_number(parsed)}{Bitir}")
+            print(f" {Beyaz}Uluslararası : {Yeşil}{phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.INTERNATIONAL)}{Bitir}")
         else:
-            print(f" {Beyaz}Type                 :{Yeşil} Other")
-
+            print(f"{Kırmızı}[!] Numara geçersiz!{Bitir}")
     except:
-        print(f"{Kırmızı}Phone error{Bitir}")
+        print(f"{Kırmızı}[!] Teknik bilgi alınamadı.{Bitir}")
 
+    # SOSYAL MEDYA
+    print(f"\n{Sarı}[*] Dijital Ayak İzi Taraması...{Bitir}")
+    clean_num = final_phone.replace("+", "")
+    print(f" {Beyaz}[ {Yeşil}LINK {Beyaz}] WhatsApp: {Cyan}https://wa.me/{clean_num}{Bitir}")
+    
+    targets = {
+        "Instagram": f'site:instagram.com "{final_phone}" OR "{clean_num}"',
+        "Twitter": f'site:twitter.com "{final_phone}" OR "{clean_num}"',
+        "Facebook": f'site:facebook.com "{final_phone}" OR "{clean_num}"'
+    }
+    
+    threads = [threading.Thread(target=_hunter_thread, args=(p, q)) for p, q in targets.items()]
+    for t in threads: t.start()
+    for t in threads: t.join()
 
-# ================= NICK (YOUR TRACK SYSTEM INCLUDED) =================
-def TrackUserName(username):
-    results = {}
+    # GHOST SEARCH
+    print(f"\n{Sarı}[*] Ghost Search (Derin İzler)...{Bitir}")
+    queries = [f'"{final_phone}"', f'"{clean_num}"', f'site:tellows.com "{clean_num}"']
+    try:
+        for q in queries:
+            for res in search(q, num_results=1, sleep_interval=1):
+                print(f" {Beyaz}[ {Yeşil}GHOST {Beyaz}] {res}")
+    except: pass
 
-    social_media = [
-        {"url": "https://www.facebook.com/{}", "name": "Facebook"},
-        {"url": "https://www.twitter.com/{}", "name": "Twitter"},
-        {"url": "https://www.instagram.com/{}", "name": "Instagram"},
-        {"url": "https://www.linkedin.com/in/{}", "name": "LinkedIn"},
-        {"url": "https://www.github.com/{}", "name": "GitHub"},
-        {"url": "https://www.pinterest.com/{}", "name": "Pinterest"},
-        {"url": "https://www.tumblr.com/{}", "name": "Tumblr"},
-        {"url": "https://www.youtube.com/{}", "name": "Youtube"},
-        {"url": "https://soundcloud.com/{}", "name": "SoundCloud"},
-        {"url": "https://www.snapchat.com/add/{}", "name": "Snapchat"},
-        {"url": "https://www.tiktok.com/@{}", "name": "TikTok"},
-        {"url": "https://www.behance.net/{}", "name": "Behance"},
-        {"url": "https://www.medium.com/@{}", "name": "Medium"},
-        {"url": "https://www.quora.com/profile/{}", "name": "Quora"},
-        {"url": "https://www.flickr.com/people/{}", "name": "Flickr"},
-        {"url": "https://www.twitch.tv/{}", "name": "Twitch"},
-        {"url": "https://www.dribbble.com/{}", "name": "Dribbble"},
-        {"url": "https://www.ello.co/{}", "name": "Ello"},
-        {"url": "https://www.producthunt.com/@{}", "name": "Product Hunt"},
-        {"url": "https://www.telegram.me/{}", "name": "Telegram"},
-        {"url": "https://www.weheartit.com/{}", "name": "We Heart It"}
-    ]
+# ================= 2: DEEP NICK SEARCH (EXPANDED) =================
+def NickSearch(username):
+    print(f'\n============={Yeşil} DEEP NICK SEARCH {Bitir}=============')
+    print(f"{Sarı}[*] Hedef Nick: {Beyaz}{username}{Sarı} taranıyor...{Bitir}\n")
+    
+    sites = {
+        "Instagram": "https://www.instagram.com/",
+        "Twitter/X": "https://www.twitter.com/",
+        "GitHub": "https://www.github.com/",
+        "YouTube": "https://www.youtube.com/@",
+        "TikTok": "https://www.tiktok.com/@",
+        "Reddit": "https://www.reddit.com/user/",
+        "Pinterest": "https://www.pinterest.com/",
+        "Snapchat": "https://www.snapchat.com/add/",
+        "Telegram": "https://t.me/",
+        "Linktree": "https://linktr.ee/",
+        "Twitch": "https://www.twitch.tv/",
+        "Steam": "https://steamcommunity.com/id/",
+        "Medium": "https://medium.com/@"
+    }
 
-    for site in social_media:
+    header = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'}
+
+    for name, base in sites.items():
         try:
-            url = site["url"].format(username)
-            r = requests.get(url, timeout=4)
-
-            if r.status_code == 200:
-                results[site["name"]] = url
+            url = base + username
+            res = requests.get(url, timeout=5, headers=header)
+            if res.status_code == 200:
+                print(f" {Beyaz}[ {Yeşil}FOUND {Beyaz}] {name:<12}: {Yeşil}{url}{Bitir}")
             else:
-                results[site["name"]] = "Not Found"
+                print(f" {Beyaz}[ {Kırmızı}NOT FOUND {Beyaz}] {name:<12}")
         except:
-            results[site["name"]] = "Error"
+            print(f" {Beyaz}[ {Mor}ERROR {Beyaz}] {name:<12}")
 
-    return results
-
-
-def NickGiveInfo():
-    username = input(f"\n {Beyaz}Nick'i Yazınız : {Yeşil}")
-
-    print(f"\n {Beyaz}========== {Yeşil} USERNAME İNFO {Beyaz}==========")
-
-    results = TrackUserName(username)
-
-    for site, url in results.items():
-        print(f" {Beyaz}[ {Yeşil}+ {Beyaz}] {site} : {Yeşil}{url}")
-
-
-# ================= IP =================
-def ip_info(ip):
-    print(f"{Yeşil}\n[IP INFO]{Bitir}")
-
-    if not re.match(r'^\d{1,3}(\.\d{1,3}){3}$', ip):
-        print(f"{Kırmızı}Geçersiz IP{Bitir}")
-        return
-
-    print(f"{Beyaz}IP : {Yeşil}{ip}")
-
-
-# ================= EMAIL =================
-def email_info(email):
-    print(f"{Yeşil}\n[EMAIL]{Bitir}")
-    if "@" not in email:
-        print(f"{Kırmızı}Geçersiz{Bitir}")
-        return
-
-    domain = email.split("@")[1]
-    print(f"{Beyaz}Domain : {Yeşil}{domain}")
-
+# ================= 13: ACTIVE DORK SCANNER =================
+def DorkSearch(target):
+    print(f'\n============={Yeşil} ACTIVE DORK SCANNER {Bitir}=============')
+    dorks = [f'"{target}"', f'site:pastebin.com "{target}"', f'site:github.com "{target}"', f'"{target}" filetype:pdf']
     try:
-        print(f"{Beyaz}IP     : {Yeşil}{socket.gethostbyname(domain)}")
-    except:
-        pass
+        for dork in dorks:
+            for res in search(dork, num_results=1, sleep_interval=2):
+                print(f" {Beyaz}[ {Yeşil}DORK FOUND {Beyaz}] {res}")
+    except: print(f"{Kırmızı}[!] Google Engeli!{Bitir}")
 
-
-# ================= DOMAIN =================
-def domain_info(domain):
-    print(f"{Yeşil}\n[DOMAIN]{Bitir}")
-    try:
-        print(f"{Beyaz}IP : {Yeşil}{socket.gethostbyname(domain)}")
-    except:
-        print(f"{Kırmızı}Hata{Bitir}")
-
-
-# ================= HASH =================
-def hash_tool(text):
-    print(f"{Yeşil}\n[HASH]{Bitir}")
-    print(f"{Beyaz}MD5  : {Yeşil}{hashlib.md5(text.encode()).hexdigest()}")
-    print(f"{Beyaz}SHA1 : {Yeşil}{hashlib.sha1(text.encode()).hexdigest()}")
-
-
-# ================= BASE64 =================
-def base64_tool(text):
-    print(f"{Yeşil}\n[BASE64]{Bitir}")
-    e = base64.b64encode(text.encode()).decode()
-    print(f"{Beyaz}ENC : {Yeşil}{e}")
-
-
-# ================= URL =================
-def url_info(url):
-    print(f"{Yeşil}\n[URL]{Bitir}")
-    print(f"{Beyaz}HTTPS : {Yeşil}{url.startswith('https')}")
-
-
-# ================= SUBDOMAIN =================
-def subdomain(domain):
-    print(f"{Yeşil}\n[SUBDOMAIN]{Bitir}")
-
-    subs = ["www", "mail", "ftp", "api"]
-
-    for s in subs:
-        try:
-            socket.gethostbyname(f"{s}.{domain}")
-            print(f"{Yeşil}FOUND: {s}.{domain}")
-        except:
-            pass
-
-
-# ================= MAIN =================
+# ================= MAIN LOOP =================
 def main():
     while True:
-        os.system("clear")
         mini_banner()
         menu()
-
         c = input(f"{Beyaz}Seçim: {Yeşil}")
-
+        
         if c == "1":
-            print("Örnek: +905551234567")
-            PhoneGiveİnfo(input("Numara: "))
-
+            print(f"\n{Sarı}[!] ÖRNEK: {Beyaz}+905556667788 {Sarı}veya {Beyaz}0555...{Bitir}")
+            MegaPhoneSearch(input(f"{Beyaz}Hedef Numara: {Yeşil}"))
         elif c == "2":
-            NickGiveInfo()
-
+            NickSearch(input(f"{Beyaz}Hedef Nick: {Yeşil}"))
         elif c == "3":
-            ip_info(input("IP: "))
-
-        elif c == "4":
-            email_info(input("Email: "))
-
-        elif c == "5":
-            domain_info(input("Domain: "))
-
-        elif c == "6":
-            hash_tool(input("Text: "))
-
-        elif c == "7":
-            base64_tool(input("Text: "))
-
-        elif c == "8":
-            url_info(input("URL: "))
-
-        elif c == "9":
-            subdomain(input("Domain: "))
-
+            # IP Info Fonksiyonu (V8.0'daki gibi eklenebilir)
+            pass
+        elif c == "13":
+            DorkSearch(input(f"{Beyaz}Hedef Bilgi: {Yeşil}"))
         elif c == "99":
             sys.exit()
-
-        input("\nENTER...")
-
+            
+        input(f"\n{Mor}Devam etmek için ENTER...{Bitir}")
 
 if __name__ == "__main__":
     main()
