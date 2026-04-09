@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Morbius.os Ultimate OSINT Tool (FULL MERGED VERSION - SAFE/PASSIVE)
+# kaandgnsh Ultimate OSINT Tool (FULL MERGED VERSION - SAFE/PASSIVE)
 
 import os
 import sys
@@ -45,11 +45,11 @@ def mini_banner():
     print(Kalın + f"""
 , ＜￣｀ヽ、　　　　　 ／￣＞     
 　ゝ、　　＼　／⌒ヽ,ノ  　/         •Welcome To•
-　　　ゝ、　`（ ( ͡° ͜ʖ ͡°)／      •Morbius.os's•
+　　　ゝ、　`（ ( ͡° ͜ʖ ͡°)／      •KaanDGN's•
 　　 　　>　 　 　,)         •Info Get Tool•
 　　　　 　∠_,,,/      
 {Bitir}
-Author: Morbius.os
+Author: kaandgnsh
 """)
 
 
