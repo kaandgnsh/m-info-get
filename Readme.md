@@ -29,9 +29,9 @@ cd m-info-get
 
 cd m-info-get
 
-python3 m-info-get.py```
+python3 m-info-get.py
 
-
+```
 ---
 
 ##⚠️ Uyarı
