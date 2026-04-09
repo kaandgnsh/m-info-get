@@ -29,12 +29,12 @@ cd m-info-get
 
 cd m-info-get
 
-python3 m-info-get.py
+python3 m-info-get.py```
 
 
 ---
 
-⚠️ Uyarı
+##⚠️ Uyarı
 
 Bu araç yalnızca eğitim ve test amaçlıdır.
 Yanlış kullanım tamamen kullanıcı sorumluluğundadır.
@@ -44,5 +44,5 @@ Yanlış kullanım tamamen kullanıcı sorumluluğundadır.
 
 👨‍💻 Developer
 
-Morbius.os
+KaanDGN
 GitHub: https://github.com/kaandgnsh
